@@ -13,7 +13,7 @@ interface PageHeroProps {
 }
 
 export default function PageHero({ title, subtitle, images, children, height = "50vh" }: PageHeroProps) {
-    const { settings } = useVisuals();
+    const { settings, isLoading } = useVisuals();
     const [activeIndex, setActiveIndex] = useState(0);
 
     // Slideshow logic
@@ -30,9 +30,10 @@ export default function PageHero({ title, subtitle, images, children, height = "
         return () => clearInterval(interval);
     }, [images, settings]);
 
-    const backgroundOverlay = settings?.backgroundEffects?.overlayDarkness ?? 60;
-    const blurAmount = settings?.backgroundEffects?.blurIntensity ?? 0;
-    const opacity = (settings?.backgroundEffects?.imageOpacity ?? 100) / 100;
+    // Use defaults during loading or server-side rendering to prevent hydration mismatch
+    const backgroundOverlay = (isLoading || !settings) ? 60 : (settings.backgroundEffects?.overlayDarkness ?? 60);
+    const blurAmount = (isLoading || !settings) ? 0 : (settings.backgroundEffects?.blurIntensity ?? 0);
+    const opacity = (isLoading || !settings) ? 1 : ((settings.backgroundEffects?.imageOpacity ?? 100) / 100);
 
     return (
         <section className="relative w-full flex items-center justify-center overflow-hidden pt-16" style={{ height }}>
