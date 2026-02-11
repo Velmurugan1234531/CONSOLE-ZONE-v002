@@ -3,6 +3,7 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { useEffect, useState } from "react";
 import { useVisuals } from "@/context/visuals-context";
+import { usePathname } from "next/navigation";
 
 interface PageHeroProps {
     title: string;
@@ -16,11 +17,27 @@ export default function PageHero({ title, subtitle, images, children, height = "
     const { settings, isLoading } = useVisuals();
     const [activeIndex, setActiveIndex] = useState(0);
 
+    const pathname = usePathname();
+
+    // Determine page ID from pathname
+    const getPageId = (path: string) => {
+        if (path === '/') return 'home';
+        const parts = path.split('/').filter(Boolean);
+        const segment = parts[0];
+        if (segment === 'admin') return 'admin';
+        if (segment === 'rent' || segment === 'book' || segment === 'rental') return 'rental';
+        if (segment === 'buy' || segment === 'sell' || segment === 'services') return segment;
+        return 'home';
+    };
+
+    const pageId = getPageId(pathname);
+    const effects = settings?.pageEffects?.[pageId] || settings?.backgroundEffects;
+
     // Slideshow logic
     useEffect(() => {
         if (!settings || !images || images.length <= 1) return;
 
-        const speed = settings.backgroundEffects?.slideshowSpeed || 10;
+        const speed = effects?.slideshowSpeed || 10;
         if (speed <= 0) return;
 
         const interval = setInterval(() => {
@@ -28,13 +45,13 @@ export default function PageHero({ title, subtitle, images, children, height = "
         }, speed * 1000);
 
         return () => clearInterval(interval);
-    }, [images, settings]);
+    }, [images, settings, effects?.slideshowSpeed]);
 
     // Use defaults during loading or server-side rendering to prevent hydration mismatch
     const DEFAULT_OVERLAY = 60;
-    const backgroundOverlay = (isLoading || !settings) ? DEFAULT_OVERLAY : (settings.backgroundEffects?.overlayDarkness ?? DEFAULT_OVERLAY);
-    const blurAmount = (isLoading || !settings) ? 0 : (settings.backgroundEffects?.blurIntensity ?? 0);
-    const opacity = (isLoading || !settings) ? 1 : ((settings.backgroundEffects?.imageOpacity ?? 100) / 100);
+    const backgroundOverlay = (isLoading || !settings) ? DEFAULT_OVERLAY : (effects?.overlayDarkness ?? DEFAULT_OVERLAY);
+    const blurAmount = (isLoading || !settings) ? 0 : (effects?.blurIntensity ?? 0);
+    const opacity = (isLoading || !settings) ? 1 : ((effects?.imageOpacity ?? 100) / 100);
 
     return (
         <section className="relative w-full flex items-center justify-center overflow-hidden pt-16" style={{ height }}>

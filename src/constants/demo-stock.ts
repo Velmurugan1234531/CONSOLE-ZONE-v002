@@ -1,81 +1,7 @@
-import { Device } from "@/types";
+import { Device, Profile } from "@/types";
 
 export const DEMO_DEVICES: Device[] = [
-    {
-        id: "demo-1",
-        serialNumber: "SN-000001",
-        model: "PS5 Disc Edition",
-        category: "PS5",
-        status: "Ready",
-        health: 100,
-        notes: "Brand new unit, ready for deployment",
-        currentUser: undefined,
-        lastService: "Jan 15, 2026",
-        cost: 45000,
-        purchaseDate: "2026-01-10",
-        warrantyExpiry: "2027-01-10",
-        supplier: "Sony India"
-    },
-    {
-        id: "demo-2",
-        serialNumber: "SN-000002",
-        model: "PS5 Disc Edition",
-        category: "PS5",
-        status: "Rented",
-        health: 95,
-        notes: "Currently on 7-day rental",
-        currentUser: "Rahul Sharma",
-        lastService: "Jan 20, 2026",
-        cost: 45000,
-        purchaseDate: "2026-01-10",
-        warrantyExpiry: "2027-01-10",
-        supplier: "Sony India"
-    },
-    {
-        id: "demo-3",
-        serialNumber: "SN-000003",
-        model: "PS5 Digital Edition",
-        category: "PS5",
-        status: "Maintenance",
-        health: 88,
-        notes: "Routine cleaning and thermal paste check",
-        currentUser: undefined,
-        lastService: "Feb 8, 2026",
-        cost: 40000,
-        purchaseDate: "2026-01-15",
-        warrantyExpiry: "2027-01-15",
-        supplier: "Sony India"
-    },
-    {
-        id: "demo-4",
-        serialNumber: "SN-000004",
-        model: "PS4 Pro",
-        category: "PS4",
-        status: "Ready",
-        health: 92,
-        notes: "1TB storage, excellent condition",
-        currentUser: undefined,
-        lastService: "Jan 25, 2026",
-        cost: 25000,
-        purchaseDate: "2025-12-01",
-        warrantyExpiry: "2026-12-01",
-        supplier: "GameStop"
-    },
-    {
-        id: "demo-5",
-        serialNumber: "SN-000005",
-        model: "Xbox Series X",
-        category: "Xbox",
-        status: "Under-Repair",
-        health: 75,
-        notes: "HDMI port replacement in progress",
-        currentUser: undefined,
-        lastService: "Feb 5, 2026",
-        cost: 48000,
-        purchaseDate: "2026-01-05",
-        warrantyExpiry: "2027-01-05",
-        supplier: "Microsoft Store"
-    },
+    // ... existing devices ...
     {
         id: "demo-6",
         serialNumber: "SN-000006",
@@ -90,5 +16,35 @@ export const DEMO_DEVICES: Device[] = [
         purchaseDate: "2026-01-20",
         warrantyExpiry: "2027-01-20",
         supplier: "Sony India"
+    }
+];
+
+export const DEMO_PROFILES: Profile[] = [
+    {
+        id: "demo-user-1",
+        email: "rahul@example.com",
+        full_name: "Rahul Sharma",
+        role: "customer",
+        kyc_status: "approved",
+        wallet_balance: 5000,
+        created_at: new Date().toISOString()
+    },
+    {
+        id: "demo-user-2",
+        email: "ananya@example.com",
+        full_name: "Ananya Iyer",
+        role: "customer",
+        kyc_status: "approved",
+        wallet_balance: 7500,
+        created_at: new Date().toISOString()
+    },
+    {
+        id: "demo-user-3",
+        email: "admin@consolezone.in",
+        full_name: "Admin User",
+        role: "admin",
+        kyc_status: "approved",
+        wallet_balance: 0,
+        created_at: new Date().toISOString()
     }
 ];

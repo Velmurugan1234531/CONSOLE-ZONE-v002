@@ -347,15 +347,28 @@ export const updateRental = async (id: string, updates: Partial<Rental>) => {
 };
 
 export const getUsers = async () => {
-    if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_URL.startsWith('http')) return [];
+    if (!isSupabaseConfigured()) {
+        const { DEMO_PROFILES } = await import("@/constants/demo-stock");
+        return DEMO_PROFILES;
+    }
     const supabase = createClient();
-    const { data, error } = await supabase
-        .from('profiles')
-        .select('*')
-        .order('full_name', { ascending: true });
+    try {
+        const { data, error } = await supabase
+            .from('profiles')
+            .select('*')
+            .order('full_name', { ascending: true });
 
-    if (error) throw error;
-    return data;
+        if (error) {
+            console.warn("Supabase getUsers failed, using demo fallback:", error.message);
+            const { DEMO_PROFILES } = await import("@/constants/demo-stock");
+            return DEMO_PROFILES;
+        }
+        return data || [];
+    } catch (e) {
+        console.error("Unexpected error in getUsers:", e);
+        const { DEMO_PROFILES } = await import("@/constants/demo-stock");
+        return DEMO_PROFILES;
+    }
 };
 
 // --- ADVANCED ANALYTICS ---
@@ -1093,8 +1106,9 @@ export const createDevice = async (deviceData: {
 export const getProfiles = async () => {
     try {
         if (!isSupabaseConfigured()) {
-            console.warn("Supabase not configured, returning empty profiles.");
-            return [];
+            console.warn("Supabase not configured, returning demo profiles.");
+            const { DEMO_PROFILES } = await import("@/constants/demo-stock");
+            return DEMO_PROFILES;
         }
 
         const supabase = createClient();
@@ -1105,11 +1119,13 @@ export const getProfiles = async () => {
 
         if (error) {
             console.error('getProfiles Error:', error);
-            throw error;
+            const { DEMO_PROFILES } = await import("@/constants/demo-stock");
+            return DEMO_PROFILES;
         }
         return data || [];
     } catch (err) {
         console.error("Unexpected error in getProfiles:", err);
-        return [];
+        const { DEMO_PROFILES } = await import("@/constants/demo-stock");
+        return DEMO_PROFILES;
     }
 };

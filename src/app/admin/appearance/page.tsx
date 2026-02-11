@@ -935,6 +935,24 @@ export default function AppearancePage() {
                                                                         className="w-full accent-[#A855F7] h-1 bg-white/10 rounded-full appearance-none"
                                                                     />
                                                                 </div>
+                                                                <div>
+                                                                    <div className="flex justify-between text-[9px] text-gray-400 uppercase tracking-widest mb-1 font-black">
+                                                                        <span>Slideshow Speed</span>
+                                                                        <span>{settings.pageEffects?.[page]?.slideshowSpeed ?? settings.backgroundEffects.slideshowSpeed}s</span>
+                                                                    </div>
+                                                                    <input
+                                                                        type="range" min="0" max="60"
+                                                                        value={settings.pageEffects?.[page]?.slideshowSpeed ?? settings.backgroundEffects.slideshowSpeed}
+                                                                        onChange={(e) => {
+                                                                            const next = JSON.parse(JSON.stringify(settings));
+                                                                            if (!next.pageEffects[page]) next.pageEffects[page] = { ...settings.backgroundEffects };
+                                                                            next.pageEffects[page].slideshowSpeed = parseInt(e.target.value);
+                                                                            setSettings(next);
+                                                                        }}
+                                                                        onMouseUp={saveHistoryStep}
+                                                                        className="w-full accent-[#A855F7] h-1 bg-white/10 rounded-full appearance-none"
+                                                                    />
+                                                                </div>
                                                             </div>
 
                                                             <div className="flex items-center gap-2 text-[8px] text-gray-600 uppercase font-black tracking-widest mb-2 border-t border-white/5 pt-4">

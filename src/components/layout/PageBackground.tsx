@@ -35,11 +35,14 @@ export default function PageBackground() {
         setActiveIndex(0); // Reset index on page change or settings change
     }, [pathname, settings, pageId]);
 
+    // Determine effects (per-page or global)
+    const effects = settings?.pageEffects?.[pageId] || settings?.backgroundEffects;
+
     // Slideshow logic
     useEffect(() => {
         if (!settings || currentImages.length <= 1) return;
 
-        const speed = settings.backgroundEffects?.slideshowSpeed || 0;
+        const speed = effects?.slideshowSpeed || 0;
         if (speed <= 0) return;
 
         const interval = setInterval(() => {
@@ -47,12 +50,9 @@ export default function PageBackground() {
         }, speed * 1000);
 
         return () => clearInterval(interval);
-    }, [currentImages, settings]);
+    }, [currentImages, settings, effects?.slideshowSpeed]);
 
     if (!settings) return null;
-
-    // Determine effects (per-page or global)
-    const effects = settings.pageEffects?.[pageId] || settings.backgroundEffects;
 
     return (
         <div className="fixed inset-0 z-0 overflow-hidden pointer-events-none bg-[#050505]">

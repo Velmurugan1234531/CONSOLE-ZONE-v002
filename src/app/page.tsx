@@ -10,17 +10,34 @@ import { useCart } from "@/context/cart-context";
 import { usePageSEO } from "@/hooks/use-seo";
 import { BackgroundSlideshow } from "@/components/ui/BackgroundSlideshow";
 
+import { getProducts, Product } from "@/services/products";
 import PageHero from "@/components/layout/PageHero";
 
 export default function Home() {
     const { addItem } = useCart();
     const [visualSettings, setVisualSettings] = useState<VisualSettings | null>(null);
+    const [buyProducts, setBuyProducts] = useState<Product[]>([]);
+    const [rentProducts, setRentProducts] = useState<Product[]>([]);
+    const [isLoadingProducts, setIsLoadingProducts] = useState(true);
     usePageSEO('home');
 
     useEffect(() => {
         const load = async () => {
             const settings = await VisualsService.getSettings();
             setVisualSettings(settings);
+
+            try {
+                const [buyData, rentData] = await Promise.all([
+                    getProducts('buy'),
+                    getProducts('rent')
+                ]);
+                setBuyProducts(buyData.slice(0, 3)); // Limit to featured
+                setRentProducts(rentData.slice(0, 3)); // Limit to featured
+            } catch (error) {
+                console.error("Error loading products for home page:", error);
+            } finally {
+                setIsLoadingProducts(false);
+            }
         };
         load();
     }, []);
@@ -109,68 +126,54 @@ export default function Home() {
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-24">
-                    {[
-                        {
-                            id: 'ps5-preowned',
-                            name: "PS5 Console (Pre-Owned)",
-                            desc: "Meticulously tested pre-owned PS5. Includes 6 months warranty.",
-                            price: "42,999",
-                            badge1: "PURCHASE",
-                            badge2: "GOLD GRADE",
-                            label: "BUY FOR",
-                            image: "/images/products/ps5.png"
-                        },
-                        {
-                            id: 'dualsense-edge',
-                            name: "DualSense Edge™ Pro Controller",
-                            desc: "High-performance wireless controller for personalized play.",
-                            price: "18,999",
-                            badge1: "PURCHASE",
-                            badge2: "ELITE GEAR",
-                            label: "BUY FOR",
-                            image: "/images/products/dualsense.png"
-                        },
-                        {
-                            id: 'pulse-3d',
-                            name: "Pulse 3D Wireless Headset",
-                            desc: "Fine-tuned for 3D Audio on PS5 consoles. Crystal clear chatting.",
-                            price: "8,599",
-                            badge1: "PURCHASE",
-                            badge2: "AUDIOPHILE",
-                            label: "BUY FOR",
-                            image: "/images/products/ps5.png" // Placeholder
-                        }
-                    ].map((item) => (
-                        <div key={item.id} className="group bg-[#0A0A0A] border border-white/5 rounded-[2.5rem] overflow-hidden flex flex-col p-6 space-y-6">
-                            <div className="relative aspect-square w-full bg-[#121212] rounded-[2rem] overflow-hidden flex items-center justify-center p-8">
-                                <span className="absolute top-4 left-4 bg-[#A855F7] text-white text-[8px] font-black px-3 py-1 rounded uppercase tracking-[0.2em] z-10">
-                                    FEATURED
-                                </span>
-                                <img src={item.image} alt={item.name} className="w-full h-full object-contain" />
+                    {isLoadingProducts ? (
+                        [...Array(3)].map((_, i) => (
+                            <div key={i} className="bg-[#0A0A0A] border border-white/5 rounded-[2.5rem] p-6 space-y-6 animate-pulse">
+                                <div className="aspect-square bg-[#121212] rounded-[2rem]" />
+                                <div className="space-y-4">
+                                    <div className="h-6 bg-white/5 rounded w-3/4" />
+                                    <div className="h-4 bg-white/5 rounded w-full" />
+                                    <div className="h-12 bg-white/5 rounded" />
+                                </div>
                             </div>
+                        ))
+                    ) : buyProducts.length > 0 ? (
+                        buyProducts.map((item) => (
+                            <div key={item.id} className="group bg-[#0A0A0A] border border-white/5 rounded-[2.5rem] overflow-hidden flex flex-col p-6 space-y-6">
+                                <div className="relative aspect-square w-full bg-[#121212] rounded-[2rem] overflow-hidden flex items-center justify-center p-8">
+                                    <span className="absolute top-4 left-4 bg-[#A855F7] text-white text-[8px] font-black px-3 py-1 rounded uppercase tracking-[0.2em] z-10">
+                                        FEATURED
+                                    </span>
+                                    <img src={item.image} alt={item.name} className="w-full h-full object-contain" />
+                                </div>
 
-                            <div className="space-y-4 px-2">
-                                <h3 className="text-xl font-black text-white uppercase tracking-tight">{item.name}</h3>
-                                <p className="text-gray-500 text-xs line-clamp-2">{item.desc}</p>
-                                <div className="flex gap-2">
-                                    <span className="text-[9px] font-black uppercase px-3 py-1 rounded border border-white/10 text-gray-400">{item.badge1}</span>
-                                    <span className="text-[9px] font-black uppercase px-3 py-1 rounded border border-[#A855F7]/30 text-[#A855F7]">{item.badge2}</span>
-                                </div>
-                                <div className="pt-4 flex items-center justify-between">
-                                    <div>
-                                        <div className="text-[9px] text-gray-600 font-bold uppercase">{item.label}</div>
-                                        <div className="text-2xl font-black text-white italic tracking-tighter">₹{item.price}</div>
+                                <div className="space-y-4 px-2">
+                                    <h3 className="text-xl font-black text-white uppercase tracking-tight">{item.name}</h3>
+                                    <p className="text-gray-500 text-xs line-clamp-2">{item.description}</p>
+                                    <div className="flex gap-2">
+                                        <span className="text-[9px] font-black uppercase px-3 py-1 rounded border border-white/10 text-gray-400">PURCHASE</span>
+                                        <span className="text-[9px] font-black uppercase px-3 py-1 rounded border border-[#A855F7]/30 text-[#A855F7]">{item.category}</span>
                                     </div>
-                                    <button
-                                        onClick={() => addItem({ id: item.id, name: item.name, price: parseInt(item.price.replace(/,/g, '')), image: item.image, quantity: 1 })}
-                                        className="w-12 h-12 bg-white/5 border border-white/10 rounded-2xl flex items-center justify-center hover:bg-[#A855F7] transition-all"
-                                    >
-                                        <ShoppingBag size={20} />
-                                    </button>
+                                    <div className="pt-4 flex items-center justify-between">
+                                        <div>
+                                            <div className="text-[9px] text-gray-600 font-bold uppercase">BUY FOR</div>
+                                            <div className="text-2xl font-black text-white italic tracking-tighter">₹{item.price.toLocaleString()}</div>
+                                        </div>
+                                        <button
+                                            onClick={() => addItem({ id: item.id, name: item.name, price: item.price, image: item.image, quantity: 1 })}
+                                            className="w-12 h-12 bg-white/5 border border-white/10 rounded-2xl flex items-center justify-center hover:bg-[#A855F7] transition-all"
+                                        >
+                                            <ShoppingBag size={20} />
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
+                        ))
+                    ) : (
+                        <div className="col-span-3 text-center py-12 text-gray-500 uppercase font-black tracking-widest text-sm bg-white/5 rounded-3xl border border-dashed border-white/10">
+                            No store products currently available
                         </div>
-                    ))}
+                    )}
                 </div>
 
                 <div className="text-center mb-16">
@@ -181,65 +184,51 @@ export default function Home() {
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-24">
-                    {[
-                        {
-                            id: 'ps5',
-                            name: "Sony PlayStation 5",
-                            desc: "Unleash new gaming possibilities with the ultra-high speed SSD and haptic feedback.",
-                            price: "4,499",
-                            badge1: "RENTAL",
-                            badge2: "NEXT-GEN",
-                            label: "RENT FROM",
-                            image: "/images/products/ps5.png"
-                        },
-                        {
-                            id: 'xbox',
-                            name: "Xbox Series X",
-                            desc: "The fastest, most powerful Xbox ever.",
-                            price: "3,999",
-                            badge1: "RENTAL",
-                            badge2: "ELITE",
-                            label: "RENT FROM",
-                            image: "/images/products/xbox.png"
-                        },
-                        {
-                            id: 'ps4',
-                            name: "Sony PlayStation 4",
-                            desc: "Incredible games, non-stop entertainment. The best value in gaming today.",
-                            price: "2,499",
-                            badge1: "RENTAL",
-                            badge2: "VALUE",
-                            label: "RENT FROM",
-                            image: "/images/products/ps5.png"
-                        }
-                    ].map((item) => (
-                        <div key={item.id} className="group bg-[#0A0A0A] border border-white/5 rounded-[2.5rem] overflow-hidden flex flex-col p-6 space-y-6">
-                            <div className="relative aspect-square w-full bg-[#121212] rounded-[2rem] overflow-hidden flex items-center justify-center p-8">
-                                <img src={item.image} alt={item.name} className="w-full h-full object-contain" />
+                    {isLoadingProducts ? (
+                        [...Array(3)].map((_, i) => (
+                            <div key={i} className="bg-[#0A0A0A] border border-white/5 rounded-[2.5rem] p-6 space-y-6 animate-pulse">
+                                <div className="aspect-square bg-[#121212] rounded-[2rem]" />
+                                <div className="space-y-4">
+                                    <div className="h-6 bg-white/5 rounded w-3/4" />
+                                    <div className="h-4 bg-white/5 rounded w-full" />
+                                    <div className="h-12 bg-white/5 rounded" />
+                                </div>
                             </div>
+                        ))
+                    ) : rentProducts.length > 0 ? (
+                        rentProducts.map((item) => (
+                            <div key={item.id} className="group bg-[#0A0A0A] border border-white/5 rounded-[2.5rem] overflow-hidden flex flex-col p-6 space-y-6">
+                                <div className="relative aspect-square w-full bg-[#121212] rounded-[2rem] overflow-hidden flex items-center justify-center p-8">
+                                    <img src={item.image} alt={item.name} className="w-full h-full object-contain" />
+                                </div>
 
-                            <div className="space-y-4 px-2">
-                                <h3 className="text-xl font-black text-white uppercase tracking-tight">{item.name}</h3>
-                                <p className="text-gray-500 text-xs line-clamp-2">{item.desc}</p>
-                                <div className="flex gap-2">
-                                    <span className="text-[9px] font-black uppercase px-3 py-1 rounded border border-white/10 text-gray-400">{item.badge1}</span>
-                                    <span className="text-[9px] font-black uppercase px-3 py-1 rounded border border-[#A855F7]/30 text-[#A855F7]">{item.badge2}</span>
-                                </div>
-                                <div className="pt-4 flex items-center justify-between">
-                                    <div>
-                                        <div className="text-[9px] text-gray-600 font-bold uppercase">{item.label}</div>
-                                        <div className="text-2xl font-black text-white italic tracking-tighter">₹{item.price}</div>
+                                <div className="space-y-4 px-2">
+                                    <h3 className="text-xl font-black text-white uppercase tracking-tight">{item.name}</h3>
+                                    <p className="text-gray-500 text-xs line-clamp-2">{item.description}</p>
+                                    <div className="flex gap-2">
+                                        <span className="text-[9px] font-black uppercase px-3 py-1 rounded border border-white/10 text-gray-400">RENTAL</span>
+                                        <span className="text-[9px] font-black uppercase px-3 py-1 rounded border border-[#A855F7]/30 text-[#A855F7]">{item.category}</span>
                                     </div>
-                                    <Link
-                                        href={`/rent/${item.id}`}
-                                        className="w-12 h-12 bg-white/5 border border-white/10 rounded-2xl flex items-center justify-center hover:bg-[#A855F7] transition-all"
-                                    >
-                                        <ArrowRight size={20} />
-                                    </Link>
+                                    <div className="pt-4 flex items-center justify-between">
+                                        <div>
+                                            <div className="text-[9px] text-gray-600 font-bold uppercase">RENT FROM</div>
+                                            <div className="text-2xl font-black text-white italic tracking-tighter">₹{item.price.toLocaleString()}</div>
+                                        </div>
+                                        <Link
+                                            href={`/rent/${item.id}`}
+                                            className="w-12 h-12 bg-white/5 border border-white/10 rounded-2xl flex items-center justify-center hover:bg-[#A855F7] transition-all"
+                                        >
+                                            <ArrowRight size={20} />
+                                        </Link>
+                                    </div>
                                 </div>
                             </div>
+                        ))
+                    ) : (
+                        <div className="col-span-3 text-center py-12 text-gray-500 uppercase font-black tracking-widest text-sm bg-white/5 rounded-3xl border border-dashed border-white/10">
+                            No rental products currently available
                         </div>
-                    ))}
+                    )}
                 </div>
 
                 {/* User Reviews Section */}
