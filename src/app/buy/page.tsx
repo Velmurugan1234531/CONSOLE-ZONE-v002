@@ -258,11 +258,12 @@ export default function BuyPage() {
                                         </div>
                                     ) : (
                                         <>
-                                            <div className="relative aspect-square overflow-hidden bg-black/40">
+                                            <Link href={`/buy/${product.id}`} className="block relative aspect-square overflow-hidden bg-black/40">
                                                 {isAdmin && (
                                                     <div className="absolute top-2 right-2 z-20 flex gap-2">
                                                         <button
                                                             onClick={(e) => {
+                                                                e.preventDefault();
                                                                 e.stopPropagation();
                                                                 startEdit(product);
                                                             }}
@@ -272,6 +273,7 @@ export default function BuyPage() {
                                                         </button>
                                                         <button
                                                             onClick={(e) => {
+                                                                e.preventDefault();
                                                                 e.stopPropagation();
                                                                 handleDelete(product.id);
                                                             }}
@@ -286,8 +288,10 @@ export default function BuyPage() {
                                                     alt={product.name}
                                                     className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                                                 />
-                                                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                                            </div>
+                                                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-center justify-center">
+                                                    <span className="text-white text-xs font-black uppercase tracking-[0.3em] border border-white/20 px-4 py-2 bg-black/20 backdrop-blur-sm rounded-full">View Details</span>
+                                                </div>
+                                            </Link>
 
                                             <div className="p-6 flex flex-col flex-1">
                                                 <div className="mb-4">
@@ -299,9 +303,11 @@ export default function BuyPage() {
                                                             Stock: {product.stock}
                                                         </span>
                                                     </div>
-                                                    <h3 className="text-xl font-bold uppercase italic leading-none mb-2 group-hover:text-[#A855F7] transition-colors">
-                                                        {product.name}
-                                                    </h3>
+                                                    <Link href={`/buy/${product.id}`}>
+                                                        <h3 className="text-xl font-bold uppercase italic leading-none mb-2 group-hover:text-[#A855F7] transition-colors">
+                                                            {product.name}
+                                                        </h3>
+                                                    </Link>
                                                     <p className="text-gray-500 text-xs line-clamp-2 leading-relaxed">
                                                         {product.description}
                                                     </p>
