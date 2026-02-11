@@ -96,7 +96,7 @@ export const DEMO_PRODUCTS: Product[] = [
         description: "Get great value for your Switch console.",
         price: 14000,
         type: 'trade-in',
-        category: 'Consoles',
+        category: 'Handheld',
         stock: 0,
         images: ["https://images.unsplash.com/photo-1578303512597-81e6cc155b3e?q=80&w=600"],
         status: 'available',
