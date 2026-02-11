@@ -4,8 +4,47 @@ export type { Product, ProductType, ProductCategory };
 
 const PRODUCTS_STORAGE_KEY = 'console_zone_products_v1';
 
+export const DEMO_PRODUCTS: Product[] = [
+    {
+        id: "ps5-disc",
+        name: "PlayStation 5 Console (Disc Edition)",
+        description: "Experience lightning-fast loading with an ultra-high speed SSD, deeper immersion with support for haptic feedback, adaptive triggers, and 3D Audio.",
+        price: 49990,
+        type: 'buy',
+        category: 'PS5',
+        stock: 5,
+        images: ["/images/products/ps5.png"],
+        status: 'active',
+        created_at: new Date().toISOString()
+    },
+    {
+        id: "xbox-series-x",
+        name: "Xbox Series X",
+        description: "The fastest, most powerful Xbox ever. Explore rich new worlds with 12 teraflops of raw graphic processing power, DirectX ray tracing, and a custom SSD.",
+        price: 48990,
+        type: 'buy',
+        category: 'Xbox',
+        stock: 3,
+        images: ["/images/products/xbox.png"],
+        status: 'active',
+        created_at: new Date().toISOString()
+    },
+    {
+        id: "switch-oled",
+        name: "Nintendo Switch (OLED Model)",
+        description: "Features a vibrant 7-inch OLED screen, a wide adjustable stand, a dock with a wired LAN port, 64 GB of internal storage, and enhanced audio.",
+        price: 32990,
+        type: 'buy',
+        category: 'Accessory',
+        stock: 8,
+        images: ["/images/products/switch.png"],
+        status: 'active',
+        created_at: new Date().toISOString()
+    }
+];
+
 /**
- * Robust Fetch: Tries Supabase, falls back to LocalStorage
+ * Robust Fetch: Tries Supabase, falls back to LocalStorage or Demo Data
  */
 export const getProducts = async (type?: ProductType, category?: string, includeHidden: boolean = false): Promise<Product[]> => {
     let products: Product[] = [];
@@ -37,27 +76,30 @@ export const getProducts = async (type?: ProductType, category?: string, include
 
         // Sync local storage if success
         if (products.length > 0 && typeof window !== 'undefined') {
-            // We only cache public products potentially? Or separate cache?
-            // For simplicity, let's only cache if includeHidden is false (public view)
             if (!includeHidden) {
                 localStorage.setItem(PRODUCTS_STORAGE_KEY, JSON.stringify(products));
             }
         }
     } catch (error) {
-        console.warn("Supabase fetch failed, falling back to localStorage:", error);
+        console.warn("Supabase fetch failed, falling back to localStorage/Demo:", error);
         if (typeof window !== 'undefined') {
             const stored = localStorage.getItem(PRODUCTS_STORAGE_KEY);
             products = stored ? JSON.parse(stored) : [];
+        }
 
-            // Apply filtering locally if needed
-            if (!includeHidden) products = products.filter(p => p.status !== 'hidden');
-            if (type) products = products.filter(p => p.type === type);
-            if (category && category !== 'All') {
-                if (category === 'Consoles') products = products.filter(p => ['PS5', 'Xbox', 'PS4'].includes(p.category));
-                else if (category === 'VR') products = products.filter(p => p.category === 'VR');
-                else if (category === 'Controllers') products = products.filter(p => p.category === 'Accessory');
-                else products = products.filter(p => p.category === category);
-            }
+        // Final fallback to hardcoded demo data if everything else is empty
+        if (products.length === 0) {
+            products = [...DEMO_PRODUCTS];
+        }
+
+        // Apply filtering locally
+        if (!includeHidden) products = products.filter(p => p.status !== 'hidden');
+        if (type) products = products.filter(p => p.type === type);
+        if (category && category !== 'All') {
+            if (category === 'Consoles') products = products.filter(p => ['PS5', 'Xbox', 'PS4'].includes(p.category));
+            else if (category === 'VR') products = products.filter(p => p.category === 'VR');
+            else if (category === 'Controllers') products = products.filter(p => p.category === 'Accessory');
+            else products = products.filter(p => p.category === category);
         }
     }
 
@@ -86,7 +128,13 @@ export const getProductById = async (id: string) => {
         // Fallback for individual product view
         if (typeof window !== 'undefined') {
             const stored = JSON.parse(localStorage.getItem(PRODUCTS_STORAGE_KEY) || '[]');
-            const found = stored.find((p: Product) => p.id === id);
+            let found = stored.find((p: Product) => p.id === id);
+
+            // If not in storage, check hardcoded demo data
+            if (!found) {
+                found = DEMO_PRODUCTS.find(p => p.id === id);
+            }
+
             if (found) {
                 return {
                     ...found,

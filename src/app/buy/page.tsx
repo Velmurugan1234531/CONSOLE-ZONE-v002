@@ -258,7 +258,18 @@ export default function BuyPage() {
                                         </div>
                                     ) : (
                                         <>
-                                            <Link href={`/buy/${product.id}`} className="block relative aspect-square overflow-hidden bg-black/40">
+                                            <div className="relative aspect-square overflow-hidden bg-black/40">
+                                                <Link href={`/buy/${product.id}`} className="block w-full h-full">
+                                                    <img
+                                                        src={product.images?.[0] || "/images/products/ps5.png"}
+                                                        alt={product.name}
+                                                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                                                    />
+                                                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-center justify-center">
+                                                        <span className="text-white text-xs font-black uppercase tracking-[0.3em] border border-white/20 px-4 py-2 bg-black/20 backdrop-blur-sm rounded-full">View Details</span>
+                                                    </div>
+                                                </Link>
+
                                                 {isAdmin && (
                                                     <div className="absolute top-2 right-2 z-20 flex gap-2">
                                                         <button
@@ -267,7 +278,7 @@ export default function BuyPage() {
                                                                 e.stopPropagation();
                                                                 startEdit(product);
                                                             }}
-                                                            className="bg-blue-600 text-white p-2 rounded-lg shadow-lg hover:scale-110 transition-transform"
+                                                            className="bg-blue-600 text-white p-2 rounded-lg shadow-lg hover:scale-110 transition-transform cursor-pointer"
                                                         >
                                                             <Filter size={14} className="rotate-180" />
                                                         </button>
@@ -277,21 +288,13 @@ export default function BuyPage() {
                                                                 e.stopPropagation();
                                                                 handleDelete(product.id);
                                                             }}
-                                                            className="bg-red-600 text-white p-2 rounded-lg shadow-lg hover:scale-110 transition-transform"
+                                                            className="bg-red-600 text-white p-2 rounded-lg shadow-lg hover:scale-110 transition-transform cursor-pointer"
                                                         >
                                                             <Trash2 size={14} />
                                                         </button>
                                                     </div>
                                                 )}
-                                                <img
-                                                    src={product.images?.[0] || "/images/products/ps5.png"}
-                                                    alt={product.name}
-                                                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
-                                                />
-                                                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-center justify-center">
-                                                    <span className="text-white text-xs font-black uppercase tracking-[0.3em] border border-white/20 px-4 py-2 bg-black/20 backdrop-blur-sm rounded-full">View Details</span>
-                                                </div>
-                                            </Link>
+                                            </div>
 
                                             <div className="p-6 flex flex-col flex-1">
                                                 <div className="mb-4">
@@ -304,7 +307,7 @@ export default function BuyPage() {
                                                         </span>
                                                     </div>
                                                     <Link href={`/buy/${product.id}`}>
-                                                        <h3 className="text-xl font-bold uppercase italic leading-none mb-2 group-hover:text-[#A855F7] transition-colors">
+                                                        <h3 className="text-xl font-bold uppercase italic leading-none mb-2 hover:text-[#A855F7] transition-colors cursor-pointer">
                                                             {product.name}
                                                         </h3>
                                                     </Link>
