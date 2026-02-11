@@ -17,6 +17,11 @@ export const metadata: Metadata = {
 
 import { VisualsProvider } from "@/context/visuals-context";
 import LayoutAnimator from "@/components/layout/LayoutAnimator";
+import { Suspense } from "react";
+
+function LoadingFallback() {
+  return <div className="fixed inset-0 bg-[#050505] z-[9999]" />;
+}
 
 export default function RootLayout({
   children,
@@ -29,11 +34,13 @@ export default function RootLayout({
         <VisualsProvider>
           <CartProvider>
             <AppearanceProvider>
-              <LayoutAnimator>
-                <Navbar />
-                {children}
-                <Footer />
-              </LayoutAnimator>
+              <Navbar />
+              <Suspense fallback={<LoadingFallback />}>
+                <LayoutAnimator>
+                  {children}
+                </LayoutAnimator>
+              </Suspense>
+              <Footer />
               <CustomerSupportAgent />
               <CartPanel />
             </AppearanceProvider>
