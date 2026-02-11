@@ -2,6 +2,8 @@ import { createClient } from "@/utils/supabase/client";
 import { Product, ProductType, ProductCategory } from "@/types";
 export type { Product, ProductType, ProductCategory };
 
+const PRODUCTS_STORAGE_KEY = 'console_zone_products_v1';
+
 export const DEMO_PRODUCTS: Product[] = [
     {
         id: "978c1aa9-a069-46a5-b14a-2bcc8d031f10",
