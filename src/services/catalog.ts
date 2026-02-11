@@ -49,7 +49,7 @@ const DEMO_CATALOG_SETTINGS: CatalogSettings[] = [
         controller_weekly_rate: 400,
         controller_monthly_rate: 1200,
         display_order: 2,
-        features: ["HDR Gaming", "100+ Games Free", "24 Hours Access", "Budget Friendly"]
+        features: ["HDR Gaming Support", "100+ Games Library", "24/7 Support Access", "Budget Friendly Rig"]
     },
     {
         id: "demo-cat-3",

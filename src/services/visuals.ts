@@ -165,8 +165,8 @@ const DEFAULT_SETTINGS: VisualSettings = {
     },
     branding: {
         siteName: "CONSOLE ZONE",
-        tagline: "The Ultimate Gaming Rental Experience",
-        accentColor: "#8B5CF6"
+        tagline: "Premium Gaming Rental Experience",
+        accentColor: "#A855F7"
     },
     globalDesign: {
         colors: {
