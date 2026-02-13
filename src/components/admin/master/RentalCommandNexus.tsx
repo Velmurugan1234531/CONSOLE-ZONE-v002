@@ -11,9 +11,9 @@ import {
 import { Device, Rental } from "@/types";
 import { getAllRentals, getAllDevices } from "@/services/admin";
 import { format } from "date-fns";
-import {
-    AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer
-} from 'recharts';
+import dynamic from 'next/dynamic';
+
+const InventoryForecastChart = dynamic(() => import("@/components/admin/AnalyticsCharts").then(mod => mod.InventoryForecastChart), { ssr: false });
 import { CommandNexusCard } from "../CommandNexusCard";
 
 export function RentalCommandNexus() {
@@ -25,8 +25,10 @@ export function RentalCommandNexus() {
     const [lockdownMode, setLockdownMode] = useState(false);
     const [surgePricing, setSurgePricing] = useState(false);
     const [recoveryMode, setRecoveryMode] = useState(false);
+    const [mounted, setMounted] = useState(false);
 
     useEffect(() => {
+        setMounted(true);
         loadData();
     }, []);
 
@@ -49,6 +51,8 @@ export function RentalCommandNexus() {
     const utilization = totalFleet > 0 ? Math.round((activeRentals / totalFleet) * 100) : 0;
 
     const availableStock = devices.filter(d => d.status?.toLowerCase() === 'ready').length;
+
+    if (!mounted) return null;
 
     // Grid Status Color
     const getGridStatus = (device: Device) => {
@@ -177,32 +181,7 @@ export function RentalCommandNexus() {
                 {/* Predictive Logistics */}
                 <CommandNexusCard title="Inventory Forecast" subtitle="Predictive modelling of asset availability" icon={TrendingUp} statusColor="blue">
                     <div className="h-[250px] w-full mt-6 bg-black/40 rounded-3xl p-6 border border-white/5">
-                        <ResponsiveContainer width="100%" height="100%">
-                            <AreaChart data={[
-                                { name: 'Mon', stock: 45 },
-                                { name: 'Tue', stock: 42 },
-                                { name: 'Wed', stock: 35 },
-                                { name: 'Thu', stock: 20 },
-                                { name: 'Fri', stock: 10 },
-                                { name: 'Sat', stock: 5 },
-                                { name: 'Sun', stock: 2 },
-                            ]}>
-                                <defs>
-                                    <linearGradient id="colorStock" x1="0" y1="0" x2="0" y2="1">
-                                        <stop offset="5%" stopColor="#3B82F6" stopOpacity={0.3} />
-                                        <stop offset="95%" stopColor="#3B82F6" stopOpacity={0} />
-                                    </linearGradient>
-                                </defs>
-                                <CartesianGrid strokeDasharray="3 3" stroke="#ffffff05" vertical={false} />
-                                <XAxis dataKey="name" stroke="#4b5563" fontSize={8} axisLine={false} tickLine={false} />
-                                <YAxis stroke="#4b5563" fontSize={8} axisLine={false} tickLine={false} />
-                                <Tooltip
-                                    contentStyle={{ backgroundColor: '#000', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '1rem', fontSize: '9px' }}
-                                    itemStyle={{ color: '#fff' }}
-                                />
-                                <Area type="monotone" dataKey="stock" stroke="#3B82F6" strokeWidth={2} fillOpacity={1} fill="url(#colorStock)" />
-                            </AreaChart>
-                        </ResponsiveContainer>
+                        <InventoryForecastChart />
                     </div>
                 </CommandNexusCard>
             </div>

@@ -125,6 +125,7 @@ export default function BookingForm({ product, initialPlan = 'DAILY' }: BookingF
 
     // Track Auth State
     useEffect(() => {
+        if (!auth) return;
         const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
             try {
                 if (firebaseUser) {

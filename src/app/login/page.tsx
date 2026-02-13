@@ -28,6 +28,9 @@ export default function LoginPage() {
         setError(null);
 
         try {
+            if (!auth) {
+                throw new Error("Authentication service is currently unavailable.");
+            }
             const { user } = await signInWithEmailAndPassword(auth, email, password);
             // Set session cookie for middleware
             document.cookie = `firebase-session=${user.uid}; path=/; max-age=3600; SameSite=Lax`;
@@ -53,6 +56,7 @@ export default function LoginPage() {
 
         const provider = new GoogleAuthProvider();
         try {
+            if (!auth) throw new Error("Auth service unavailable");
             const { user } = await signInWithPopup(auth, provider);
             // Set session cookie for middleware
             document.cookie = `firebase-session=${user.uid}; path=/; max-age=3600; SameSite=Lax`;
@@ -70,6 +74,7 @@ export default function LoginPage() {
 
         const provider = new OAuthProvider("apple.com");
         try {
+            if (!auth) throw new Error("Auth service unavailable");
             await signInWithPopup(auth, provider);
             router.push("/");
             router.refresh();

@@ -20,6 +20,7 @@ export default function NotificationBell() {
     const dropdownRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
+        if (!auth) return;
         const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
             if (firebaseUser) {
                 setUserId(firebaseUser.uid);

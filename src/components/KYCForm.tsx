@@ -158,7 +158,7 @@ export default function KYCForm({ onSuccess, className }: KYCFormProps) {
 
         try {
             let userId = "";
-            const firebaseUser = auth.currentUser;
+            const firebaseUser = auth?.currentUser;
 
             if (firebaseUser) {
                 userId = firebaseUser.uid;

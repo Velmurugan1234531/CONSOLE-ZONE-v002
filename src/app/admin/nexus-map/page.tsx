@@ -1,8 +1,13 @@
 "use client";
 
-import { FleetCommandNexus } from "@/components/admin/master/FleetCommandNexus";
+import dynamic from "next/dynamic";
 import { Globe, Crosshair, Zap, Shield, Search } from "lucide-react";
 import PageHero from "@/components/layout/PageHero";
+
+const FleetCommandNexus = dynamic(
+    () => import("@/components/admin/master/FleetCommandNexus").then(mod => mod.FleetCommandNexus),
+    { ssr: false }
+);
 
 export default function NexusMapPage() {
     return (

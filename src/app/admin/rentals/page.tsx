@@ -11,13 +11,16 @@ import {
 import Link from "next/link";
 import { getAllRentals, updateRentalStatus, updateRental } from "@/services/admin";
 import { format } from "date-fns";
-import { RentalCalendar } from "@/components/admin/RentalCalendar";
-import { RentalStats } from "@/components/admin/RentalStats";
-import { RentalFinancials } from "@/components/admin/RentalFinancials";
-import { ConsoleStockManager } from "@/components/admin/ConsoleStockManager";
+import dynamic from 'next/dynamic';
+
+const RentalCalendar = dynamic(() => import("@/components/admin/RentalCalendar").then(mod => mod.RentalCalendar), { ssr: false });
+const RentalStats = dynamic(() => import("@/components/admin/RentalStats").then(mod => mod.RentalStats), { ssr: false });
+const RentalFinancials = dynamic(() => import("@/components/admin/RentalFinancials").then(mod => mod.RentalFinancials), { ssr: false });
+const ConsoleStockManager = dynamic(() => import("@/components/admin/ConsoleStockManager").then(mod => mod.ConsoleStockManager), { ssr: false });
+const FleetManager = dynamic(() => import("@/components/admin/FleetManager").then(mod => mod.FleetManager), { ssr: false });
+const ManualBooking = dynamic(() => import("@/components/admin/ManualBooking").then(mod => mod.ManualBooking), { ssr: false });
+
 import { ReturnModal } from "@/components/admin/ReturnModal";
-import { ManualBooking } from "@/components/admin/ManualBooking";
-import { FleetManager } from "@/components/admin/FleetManager";
 import { AssignUnitModal } from "@/components/admin/AssignUnitModal";
 import { getCatalogSettings, saveCatalogSettings, resetCatalogSettings, type CatalogSettings } from '@/services/catalog-settings';
 import { getControllerSettings, saveControllerSettings, resetControllerSettings, type ControllerSettings } from '@/services/controller-settings';
@@ -44,8 +47,10 @@ export default function RentalsPage() {
     const [controllerSettings, setControllerSettings] = useState<ControllerSettings>(getControllerSettings());
     const [devices, setDevices] = useState<Device[]>([]);
     const [fleetHealth, setFleetHealth] = useState(0);
+    const [mounted, setMounted] = useState(false);
 
     useEffect(() => {
+        setMounted(true);
         const params = new URLSearchParams(window.location.search);
         const view = params.get('view') as ViewType;
         if (view && ['monitor', 'ledger', 'booking', 'calendar', 'fleet', 'engine'].includes(view)) {
@@ -135,6 +140,12 @@ export default function RentalsPage() {
     });
 
     const activeRentals = rentals.filter(r => r.status === 'active' || r.status === 'overdue');
+
+    if (!mounted) {
+        return <div className="min-h-screen bg-[#050505] text-white flex items-center justify-center font-mono text-xs uppercase tracking-[0.4em] animate-pulse">
+            Establishing Secure Link...
+        </div>;
+    }
 
     return (
         <div className="flex flex-col h-screen overflow-hidden bg-[#050505] text-white">

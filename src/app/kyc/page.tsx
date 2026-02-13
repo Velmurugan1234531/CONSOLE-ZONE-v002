@@ -102,7 +102,7 @@ export default function KYCPage() {
         setUploading(true);
 
         try {
-            const user = auth.currentUser;
+            const user = auth?.currentUser;
 
             if (!user) {
                 // Check Demo Session

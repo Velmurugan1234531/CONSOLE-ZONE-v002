@@ -1,5 +1,7 @@
 "use client";
 
+import { useState, useEffect } from "react";
+
 import { motion } from "framer-motion";
 import {
     LayoutDashboard,
@@ -31,17 +33,10 @@ import Link from "next/link";
 import { useQuery } from "@tanstack/react-query";
 import { getAdminStats, getRevenueAnalytics, RevenueDataPoint, getDashboardActivity } from "@/services/admin";
 import { formatDistanceToNow } from "date-fns";
-import {
-    AreaChart,
-    Area,
-    XAxis,
-    YAxis,
-    CartesianGrid,
-    Tooltip,
-    ResponsiveContainer,
-    BarChart,
-    Bar
-} from 'recharts';
+import dynamic from 'next/dynamic';
+
+const DashboardRevenueChart = dynamic(() => import("@/components/admin/AnalyticsCharts").then(mod => mod.DashboardRevenueChart), { ssr: false });
+const ActivityBarChart = dynamic(() => import("@/components/admin/AnalyticsCharts").then(mod => mod.ActivityBarChart), { ssr: false });
 
 const ADMIN_MODULES = [
     {
@@ -82,6 +77,12 @@ const ADMIN_MODULES = [
 ];
 
 export default function AdminDashboard() {
+    const [mounted, setMounted] = useState(false);
+
+    useEffect(() => {
+        setMounted(true);
+    }, []);
+
     const { data: stats } = useQuery({
         queryKey: ['adminStats'],
         queryFn: getAdminStats,
@@ -106,7 +107,7 @@ export default function AdminDashboard() {
     // We'll keep a simple check for the critical 'stats' to avoid layout shifts.
     const loading = !stats;
 
-    if (loading) {
+    if (!mounted || loading) {
         return (
             <div className="min-h-screen flex flex-col items-center justify-center gap-4 bg-[#050505]">
                 <Loader2 className="animate-spin text-[#8B5CF6]" size={48} />
@@ -286,46 +287,7 @@ export default function AdminDashboard() {
                     </div>
 
                     <div className="h-[300px] w-full pt-4">
-                        <ResponsiveContainer width="100%" height="100%">
-                            <AreaChart data={revenueData}>
-                                <defs>
-                                    <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
-                                        <stop offset="5%" stopColor="#8B5CF6" stopOpacity={0.3} />
-                                        <stop offset="95%" stopColor="#8B5CF6" stopOpacity={0} />
-                                    </linearGradient>
-                                </defs>
-                                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#1a1a1a" />
-                                <XAxis
-                                    dataKey="formattedDate"
-                                    stroke="#4b5563"
-                                    fontSize={10}
-                                    tickLine={false}
-                                    axisLine={false}
-                                    tick={{ fontWeight: 900, fontSize: 10 }}
-                                />
-                                <YAxis
-                                    stroke="#4b5563"
-                                    fontSize={10}
-                                    tickLine={false}
-                                    axisLine={false}
-                                    tickFormatter={(val) => `₹${val}`}
-                                    tick={{ fontWeight: 900, fontSize: 10 }}
-                                />
-                                <Tooltip
-                                    contentStyle={{ background: '#0a0a0a', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '16px', fontSize: '12px', fontWeight: 'bold' }}
-                                    itemStyle={{ color: '#8B5CF6' }}
-                                    cursor={{ stroke: '#8B5CF6', strokeWidth: 1 }}
-                                />
-                                <Area
-                                    type="monotone"
-                                    dataKey="amount"
-                                    stroke="#8B5CF6"
-                                    strokeWidth={4}
-                                    fillOpacity={1}
-                                    fill="url(#colorRevenue)"
-                                />
-                            </AreaChart>
-                        </ResponsiveContainer>
+                        <DashboardRevenueChart revenueData={revenueData} />
                     </div>
                 </div>
 
@@ -340,35 +302,13 @@ export default function AdminDashboard() {
                     </div>
 
                     <div className="h-[250px] w-full">
-                        <ResponsiveContainer width="100%" height="100%">
-                            <BarChart data={[
-                                { name: "PS5", rentals: 45, sales: 12 },
-                                { name: "XBOX", rentals: 32, sales: 8 },
-                                { name: "PC", rentals: 15, sales: 55 },
-                                { name: "VR", rentals: 25, sales: 10 },
-                                { name: "Games", rentals: 80, sales: 95 },
-                            ]}>
-                                <XAxis
-                                    dataKey="name"
-                                    stroke="#374151"
-                                    fontSize={10}
-                                    tickLine={false}
-                                    axisLine={false}
-                                />
-                                <YAxis hide />
-                                <Tooltip
-                                    contentStyle={{
-                                        backgroundColor: '#0a0a0a',
-                                        border: '1px solid rgba(255,255,255,0.05)',
-                                        borderRadius: '12px',
-                                        fontSize: '10px',
-                                        fontFamily: 'monospace'
-                                    }}
-                                />
-                                <Bar dataKey="rentals" fill="#3B82F6" radius={[4, 4, 0, 0]} barSize={12} />
-                                <Bar dataKey="sales" fill="#10B981" radius={[4, 4, 0, 0]} barSize={12} />
-                            </BarChart>
-                        </ResponsiveContainer>
+                        <ActivityBarChart data={[
+                            { name: "PS5", rentals: 45, sales: 12 },
+                            { name: "XBOX", rentals: 32, sales: 8 },
+                            { name: "PC", rentals: 15, sales: 55 },
+                            { name: "VR", rentals: 25, sales: 10 },
+                            { name: "Games", rentals: 80, sales: 95 },
+                        ]} />
                     </div>
 
                     <div className="flex items-center gap-4 text-[9px] font-black uppercase tracking-widest">

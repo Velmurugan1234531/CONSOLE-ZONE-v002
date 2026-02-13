@@ -31,6 +31,7 @@ export default function SignupPage() {
         setError(null);
 
         try {
+            if (!auth) throw new Error("Auth service unavailable");
             const { user } = await createUserWithEmailAndPassword(auth, email, password);
             if (user) {
                 await updateProfile(user, {
@@ -53,6 +54,7 @@ export default function SignupPage() {
 
         const provider = new GoogleAuthProvider();
         try {
+            if (!auth) throw new Error("Auth service unavailable");
             const { user } = await signInWithPopup(auth, provider);
             // Set session cookie for middleware
             document.cookie = `firebase-session=${user.uid}; path=/; max-age=3600; SameSite=Lax`;
@@ -70,6 +72,7 @@ export default function SignupPage() {
 
         const provider = new OAuthProvider("apple.com");
         try {
+            if (!auth) throw new Error("Auth service unavailable");
             const { user } = await signInWithPopup(auth, provider);
             // Set session cookie for middleware
             document.cookie = `firebase-session=${user.uid}; path=/; max-age=3600; SameSite=Lax`;

@@ -1,0 +1,42 @@
+﻿
+> gaming-rental-platform@0.1.0 build
+> next build
+
+Ôû▓ Next.js 16.1.6 (Turbopack)
+- Environments: .env.local
+
+node.exe : ÔÜá The "middleware" file convention is deprecated. Please use 
+"proxy" instead. Learn more: 
+https://nextjs.org/docs/messages/middleware-to-proxy
+At line:1 char:1
++ & "C:\Program Files\nodejs/node.exe" "C:\Program Files\nodejs/node_mo ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (ÔÜá The "middle...leware-to-pr 
+   oxy:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+  Creating an optimized production build ...
+Ô£ô Compiled successfully in 22.5s
+  Running TypeScript ...
+Failed to compile.
+
+./src/app/login/page.tsx:31:63
+Type error: Argument of type 'Auth | undefined' is not assignable to 
+parameter of type 'Auth'.
+  Type 'undefined' is not assignable to type 'Auth'.
+
+[0m [90m 29 |[39m
+ [90m 30 |[39m         [36mtry[39m {
+[31m[1m>[22m[39m[90m 31 |[39m             [36mconst[39m { user } 
+[33m=[39m [36mawait[39m signInWithEmailAndPassword(auth[33m,[39m 
+email[33m,[39m password)[33m;[39m
+ [90m    |[39m                                                            
+   [31m[1m^[22m[39m
+ [90m 32 |[39m             [90m// Set session cookie for middleware[39m
+ [90m 33 |[39m             document[33m.[39mcookie [33m=[39m 
+[32m`firebase-session=${user.uid}; path=/; max-age=3600; 
+SameSite=Lax`[39m[33m;[39m
+ [90m 34 |[39m             
+router[33m.[39mpush([32m"/"[39m)[33m;[39m[0m
+Next.js build worker exited with code: 1 and signal: null
+

@@ -1,0 +1,55 @@
+﻿
+> gaming-rental-platform@0.1.0 build
+> next build
+
+Ôû▓ Next.js 16.1.6 (Turbopack)
+- Environments: .env.local
+
+node.exe : ÔÜá The "middleware" file convention is deprecated. Please use 
+"proxy" instead. Learn more: 
+https://nextjs.org/docs/messages/middleware-to-proxy
+At line:1 char:1
++ & "C:\Program Files\nodejs/node.exe" "C:\Program Files\nodejs/node_mo ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (ÔÜá The 
+"middle...leware-to-proxy:S    tring) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+  Creating an optimized production build ...
+Ô£ô Compiled successfully in 21.9s
+  Running TypeScript ...
+  Collecting page data using 3 workers ...
+ÔÜá´©Å  RAZORPAY NOT CONFIGURED - Running in DEMO mode.
+  Generating static pages using 3 workers (0/48) ...
+ÔÜá´©Å  RAZORPAY NOT CONFIGURED - Running in DEMO mode.
+ÔÜá´©Å Supabase credentials missing or invalid. Using placeholder to 
+prevent crash.
+  Generating static pages using 3 workers (12/48) 
+  Generating static pages using 3 workers (24/48) 
+Error occurred prerendering page "/admin/nexus-map". Read more: 
+https://nextjs.org/docs/messages/prerender-error
+ReferenceError: window is not defined
+    at <unknown> (C:\Users\3D Pixel Printing\Music\CONSOLE-ZONE-v006\.next\s
+erver\chunks\ssr\_f35e6a5b._.js:1:1943)
+    at module evaluation (C:\Users\3D Pixel Printing\Music\CONSOLE-ZONE-v006
+\.next\server\chunks\ssr\_f35e6a5b._.js:1:148384)
+    at instantiateModule (C:\Users\3D Pixel Printing\Music\CONSOLE-ZONE-v006
+\.next\server\chunks\ssr\[turbopack]_runtime.js:740:9)
+    at getOrInstantiateModuleFromParent (C:\Users\3D Pixel Printing\Music\CO
+NSOLE-ZONE-v006\.next\server\chunks\ssr\[turbopack]_runtime.js:763:12)
+    at Context.esmImport [as i] (C:\Users\3D Pixel Printing\Music\CONSOLE-ZO
+NE-v006\.next\server\chunks\ssr\[turbopack]_runtime.js:228:20)
+    at module evaluation (C:\Users\3D Pixel Printing\Music\CONSOLE-ZONE-v006
+\.next\server\chunks\ssr\_f35e6a5b._.js:1:148670)
+    at instantiateModule (C:\Users\3D Pixel Printing\Music\CONSOLE-ZONE-v006
+\.next\server\chunks\ssr\[turbopack]_runtime.js:740:9)
+    at getOrInstantiateModuleFromParent (C:\Users\3D Pixel Printing\Music\CO
+NSOLE-ZONE-v006\.next\server\chunks\ssr\[turbopack]_runtime.js:763:12)
+    at Context.commonJsRequire [as r] (C:\Users\3D Pixel Printing\Music\CONS
+OLE-ZONE-v006\.next\server\chunks\ssr\[turbopack]_runtime.js:249:12) {
+  digest: '4003574775'
+}
+Export encountered an error on /admin/nexus-map/page: /admin/nexus-map, 
+exiting the build.
+Ô¿» Next.js build worker exited with code: 1 and signal: null
+

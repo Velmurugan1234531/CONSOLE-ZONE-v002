@@ -12,6 +12,7 @@ export default function AuthButton() {
 
     useEffect(() => {
         // Priority: Check real Firebase session
+        if (!auth) return;
         const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
             if (firebaseUser) {
                 // Adapt Firebase user object to match expected UI structure
@@ -52,7 +53,9 @@ export default function AuthButton() {
 
     const handleSignOut = async () => {
         try {
-            await firebaseSignOut(auth);
+            if (auth) {
+                await firebaseSignOut(auth);
+            }
             localStorage.removeItem('DEMO_USER_SESSION');
             document.cookie = "firebase-session=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
             setUser(null);

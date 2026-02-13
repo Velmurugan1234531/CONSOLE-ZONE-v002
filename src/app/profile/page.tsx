@@ -25,6 +25,11 @@ export default function ProfilePage() {
     const { settings } = useVisuals();
 
     useEffect(() => {
+        if (!auth) {
+            setLoading(false);
+            return;
+        }
+
         const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
             if (firebaseUser) {
                 const currentUser = {
@@ -67,7 +72,9 @@ export default function ProfilePage() {
     const handleSignOut = async () => {
         setLoading(true);
         try {
-            await firebaseSignOut(auth);
+            if (auth) {
+                await firebaseSignOut(auth);
+            }
             localStorage.removeItem('DEMO_USER_SESSION');
             router.push("/");
             router.refresh();

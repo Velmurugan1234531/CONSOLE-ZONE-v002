@@ -1,0 +1,35 @@
+﻿
+> gaming-rental-platform@0.1.0 build
+> next build
+
+Ôû▓ Next.js 16.1.6 (Turbopack)
+- Environments: .env.local
+
+node.exe : ÔÜá The "middleware" file convention is deprecated. Please use 
+"proxy" instead. Learn more: 
+https://nextjs.org/docs/messages/middleware-to-proxy
+At line:1 char:1
++ & "C:\Program Files\nodejs/node.exe" "C:\Program Files\nodejs/node_mo ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (ÔÜá The "middle...leware-to-pr 
+   oxy:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+  Creating an optimized production build ...
+Ô£ô Compiled successfully in 19.5s
+  Running TypeScript ...
+Failed to compile.
+
+./src/app/kyc/page.tsx:105:26
+Type error: 'auth' is possibly 'undefined'.
+
+[0m [90m 103 |[39m
+ [90m 104 |[39m         [36mtry[39m {
+[31m[1m>[22m[39m[90m 105 |[39m             [36mconst[39m user 
+[33m=[39m auth[33m.[39mcurrentUser[33m;[39m
+ [90m     |[39m                          [31m[1m^[22m[39m
+ [90m 106 |[39m
+ [90m 107 |[39m             [36mif[39m ([33m![39muser) {
+ [90m 108 |[39m                 [90m// Check Demo Session[39m[0m
+Next.js build worker exited with code: 1 and signal: null
+

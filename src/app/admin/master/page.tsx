@@ -45,21 +45,25 @@ import { getBusinessSettings, saveBusinessSettings, resetBusinessSettings, type 
 import { motion, AnimatePresence } from "framer-motion";
 import { getAllDevices, getSystemMetrics, getFleetAnalytics, getRevenueAnalytics } from "@/services/admin";
 import { Device } from "@/types";
-import { NexusTerminal } from "@/components/admin/NexusTerminal";
-import { RentalCommandNexus } from "@/components/admin/master/RentalCommandNexus";
-import { KYCCommandNexus } from "@/components/admin/master/KYCCommandNexus";
+import dynamic from 'next/dynamic';
+
+const NexusTerminal = dynamic(() => import("@/components/admin/NexusTerminal").then(mod => mod.NexusTerminal), { ssr: false });
+const SystemPulse = dynamic(() => import("@/components/admin/SystemPulse").then(mod => mod.SystemPulse), { ssr: false });
+const RentalCommandNexus = dynamic(() => import("@/components/admin/master/RentalCommandNexus").then(mod => mod.RentalCommandNexus), { ssr: false });
+const FleetCommandNexus = dynamic(() => import("@/components/admin/master/FleetCommandNexus").then(mod => mod.FleetCommandNexus), { ssr: false });
+const KYCCommandNexus = dynamic(() => import("@/components/admin/master/KYCCommandNexus").then(mod => mod.KYCCommandNexus), { ssr: false });
+
+const RevenueChart = dynamic(() => import("@/components/admin/AnalyticsCharts").then(mod => mod.RevenueChart), { ssr: false });
+const HealthPieChart = dynamic(() => import("@/components/admin/AnalyticsCharts").then(mod => mod.HealthPieChart), { ssr: false });
+const LatencyChart = dynamic(() => import("@/components/admin/AnalyticsCharts").then(mod => mod.LatencyChart), { ssr: false });
+
 import { getKYCStats } from "@/services/admin";
-import { SystemPulse } from "@/components/admin/SystemPulse";
 import { CommandNexusCard } from "@/components/admin/CommandNexusCard";
-import { FleetCommandNexus } from "@/components/admin/master/FleetCommandNexus";
-import {
-    AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
-    PieChart, Pie, Cell, LineChart, Line, BarChart, Bar
-} from 'recharts';
 
 export default function MasterControlPage() {
     const [activeTab, setActiveTab] = useState("system");
     const [isLoadingSettings, setIsLoadingSettings] = useState(true);
+    const [mounted, setMounted] = useState(false);
 
 
     // Marketplace Settings State
@@ -83,6 +87,7 @@ export default function MasterControlPage() {
     const [kycStats, setKycStats] = useState({ pending: 0, approvalRate: 0 });
 
     useEffect(() => {
+        setMounted(true);
         const load = async () => {
             try {
                 // Fetch all data with individual fallback protection
@@ -122,7 +127,6 @@ export default function MasterControlPage() {
 
     // Save All Settings
     const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'success' | 'error'>('idle');
-
     const handleSaveSettings = async () => {
         setSaveStatus('saving');
         try {
@@ -138,6 +142,12 @@ export default function MasterControlPage() {
             setTimeout(() => setSaveStatus('idle'), 5000);
         }
     };
+
+    if (!mounted) {
+        return <div className="min-h-screen bg-[#050505] text-white flex items-center justify-center font-mono text-xs uppercase tracking-[0.4em] animate-pulse">
+            Establishing Secure Link...
+        </div>;
+    }
 
     return (
         <div className="min-h-screen bg-[#050505] text-white p-6 lg:p-10 space-y-10 custom-scrollbar overflow-x-hidden">
@@ -267,24 +277,7 @@ export default function MasterControlPage() {
                                             statusColor="purple"
                                         >
                                             <div className="h-[300px] w-full mt-6 bg-white/5 rounded-3xl p-6 border border-white/5 backdrop-blur-sm">
-                                                <ResponsiveContainer width="100%" height="100%">
-                                                    <AreaChart data={revenueData}>
-                                                        <defs>
-                                                            <linearGradient id="colorAmount" x1="0" y1="0" x2="0" y2="1">
-                                                                <stop offset="5%" stopColor="#8B5CF6" stopOpacity={0.3} />
-                                                                <stop offset="95%" stopColor="#8B5CF6" stopOpacity={0} />
-                                                            </linearGradient>
-                                                        </defs>
-                                                        <CartesianGrid strokeDasharray="3 3" stroke="#ffffff05" vertical={false} />
-                                                        <XAxis dataKey="formattedDate" stroke="#4b5563" fontSize={10} axisLine={false} tickLine={false} />
-                                                        <YAxis stroke="#4b5563" fontSize={10} axisLine={false} tickLine={false} tickFormatter={(v) => `₹${v / 1000}k`} />
-                                                        <Tooltip
-                                                            contentStyle={{ backgroundColor: '#0a0a0a', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '1rem', fontSize: '10px' }}
-                                                            itemStyle={{ color: '#fff' }}
-                                                        />
-                                                        <Area type="monotone" dataKey="amount" stroke="#8B5CF6" strokeWidth={3} fillOpacity={1} fill="url(#colorAmount)" />
-                                                    </AreaChart>
-                                                </ResponsiveContainer>
+                                                <RevenueChart revenueData={revenueData} />
                                             </div>
                                         </CommandNexusCard>
                                     </div>
@@ -295,33 +288,7 @@ export default function MasterControlPage() {
                                             icon={Shield}
                                             statusColor="emerald"
                                         >
-                                            <div className="h-[200px] w-full flex items-center justify-center relative">
-                                                <ResponsiveContainer width="100%" height="100%">
-                                                    <PieChart>
-                                                        <Pie
-                                                            data={fleetAnalytics?.healthDistribution || []}
-                                                            cx="50%"
-                                                            cy="50%"
-                                                            innerRadius={60}
-                                                            outerRadius={80}
-                                                            paddingAngle={5}
-                                                            dataKey="value"
-                                                            stroke="none"
-                                                        >
-                                                            {fleetAnalytics?.healthDistribution?.map((entry: any, index: number) => (
-                                                                <Cell key={`cell-${index}`} fill={entry.color} />
-                                                            ))}
-                                                        </Pie>
-                                                        <Tooltip
-                                                            contentStyle={{ backgroundColor: '#0a0a0a', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '1rem', fontSize: '10px' }}
-                                                        />
-                                                    </PieChart>
-                                                </ResponsiveContainer>
-                                                <div className="absolute flex flex-col items-center justify-center">
-                                                    <span className="text-2xl font-black text-white">{fleetHealth}%</span>
-                                                    <span className="text-[8px] text-gray-500 uppercase font-black">Avg Sync</span>
-                                                </div>
-                                            </div>
+                                            <HealthPieChart fleetAnalytics={fleetAnalytics} fleetHealth={fleetHealth} />
                                         </CommandNexusCard>
 
                                         <CommandNexusCard
@@ -643,17 +610,7 @@ export default function MasterControlPage() {
                                             </CommandNexusCard>
                                             <CommandNexusCard title="Latency Telemetry" subtitle="Real-time response times" icon={Activity} statusColor="blue">
                                                 <div className="h-[200px] w-full mt-4 bg-white/5 rounded-3xl p-6 border border-white/5 backdrop-blur-sm">
-                                                    <ResponsiveContainer width="100%" height="100%">
-                                                        <LineChart data={systemMetrics?.latencySeries}>
-                                                            <CartesianGrid strokeDasharray="3 3" stroke="#ffffff03" vertical={false} />
-                                                            <XAxis dataKey="time" stroke="#4b5563" fontSize={8} axisLine={false} tickLine={false} />
-                                                            <YAxis stroke="#4b5563" fontSize={8} axisLine={false} tickLine={false} tickFormatter={(v) => `${Math.round(v)}ms`} />
-                                                            <Tooltip
-                                                                contentStyle={{ backgroundColor: '#0a0a0a', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '1rem', fontSize: '8px' }}
-                                                            />
-                                                            <Line type="monotone" dataKey="value" stroke="#3B82F6" strokeWidth={2} dot={false} animationDuration={300} />
-                                                        </LineChart>
-                                                    </ResponsiveContainer>
+                                                    <LatencyChart data={systemMetrics?.latencySeries || []} />
                                                 </div>
                                             </CommandNexusCard>
                                         </div>
